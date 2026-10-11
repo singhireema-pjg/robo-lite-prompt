@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Robo-Literal: Can You Out-Instruct a Robot?</title>
+    <!-- Tailwind CSS for modern responsive styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Fredoka & Inter for friendly, readable typography -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0fdf4;
+            color: #1e293b;
+        }
+        h1, h2, h3, .font-heading {
+            font-family: 'Fredoka', sans-serif;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f5f9;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        @keyframes bounce-gentle {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
+        }
+        .animate-gentle {
+            animation: bounce-gentle 2.5s ease-in-out infinite;
+        }
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 15px rgba(34, 197, 94, 0.4); }
+            50% { box-shadow: 0 0 25px rgba(34, 197, 94, 0.8); }
+        }
+        .glow-box {
+            animation: pulse-glow 3s infinite;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col bg-gradient-to-br from-emerald-50 via-teal-50 to-cyan-50">
+
+    <header class="bg-white border-b border-emerald-100 shadow-sm sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex flex-wrap items-center justify-between gap-4">
+            <div class="flex items-center space-x-3 cursor-pointer" onclick="app.switchView('hub')">
+                <div class="w-10 h-10 bg-emerald-500 rounded-2xl flex items-center justify-center shadow-md transform hover:scale-105 transition">
+                    <span class="text-2xl">🤖</span>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold text-emerald-800 tracking-wide">Robo-Literal</h1>
+                    <p class="text-xs text-emerald-600 font-medium">Can You Out-Instruct a Robot?</p>
+                </div>
+            </div>
+            
+            <div class="flex items-center space-x-2 md:space-x-3">
+                <button onclick="app.switchView('hub')" id="nav-hub" class="px-3 py-1.5 rounded-xl text-sm font-semibold transition bg-emerald-100 text-emerald-800 hover:bg-emerald-200">
+                    🏠 Levels
+                </button>
+                <button onclick="app.switchView('guide')" id="nav-guide" class="px-3 py-1.5 rounded-xl text-sm font-semibold transition bg-gray-100 text-gray-700 hover:bg-gray-200">
+                    📖 Literal Guide
+                </button>
+                <button onclick="app.resetAllProgress()" class="px-3 py-1.5 rounded-xl text-sm font-semibold transition bg-rose-50 text-rose-700 hover:bg-rose-100 border border-rose-200" title="Start Over">
+                    🔄 Reset
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow max-w-6xl w-full mx-auto p-4 sm:p-6 md:p-8">
+
+        <!-- VIEW: Level Hub / Selection -->
+        <div id="view-hub" class="space-y-8">
+            <!-- Hero banner with Robot mascot -->
+            <div class="bg-gradient-to-r from-emerald-500 to-teal-600 rounded-3xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden flex flex-col md:flex-row items-center justify-between gap-6">
+                <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
+                <div class="space-y-4 max-w-xl z-10">
+                    <span class="bg-emerald-400/40 text-emerald-100 text-xs font-bold px-3 py-1.5 rounded-full uppercase tracking-wider border border-emerald-300/30">AI Literacy Quest (Ages 9-13)</span>
+                    <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight">AI doesn't think. It only does what you say!</h2>
+                    <p class="text-emerald-50 text-sm sm:text-base leading-relaxed">
+                        Meet <strong>Literal-Bot 3000</strong>! He has zero common sense, never guesses, and never fills in missing steps. Give him step-by-step instructions and watch him execute every single prompt literally!
+                    </p>
+                    <div class="flex flex-wrap gap-3 pt-2">
+                        <button onclick="app.startLevel(1)" class="bg-white text-emerald-800 hover:bg-emerald-50 font-bold px-6 py-3 rounded-2xl shadow-lg transition transform hover:-translate-y-0.5">
+                            🥪 Play Level 1: Sandwich
+                        </button>
+                    </div>
+                </div>
+                <!-- SVG Cartoon Robot Mascot -->
+                <div class="z-10 flex flex-col items-center animate-gentle">
+                    <svg width="140" height="160" viewBox="0 0 140 160" class="drop-shadow-xl">
+                        <!-- Antenna -->
+                        <line x1="70" y1="30" x2="70" y2="10" stroke="#047857" stroke-width="4" stroke-linecap="round"/>
+                        <circle cx="70" cy="8" r="8" fill="#facc15" stroke="#ca8a04" stroke-width="3"/>
+                        <!-- Head -->
+                        <rect x="35" y="30" width="70" height="55" rx="14" fill="#34d399" stroke="#047857" stroke-width="4"/>
+                        <!-- Ears / Bolts -->
+                        <rect x="27" y="48" width="10" height="18" rx="3" fill="#047857"/>
+                        <rect x="103" y="48" width="10" height="18" rx="3" fill="#047857"/>
+                        <!-- Eyes (Happy/Neutral) -->
+                        <circle cx="55" cy="52" r="7" fill="#ffffff" stroke="#047857" stroke-width="3"/>
+                        <circle cx="56" cy="52" r="2.5" fill="#1e293b"/>
+                        <circle cx="85" cy="52" r="7" fill="#ffffff" stroke="#047857" stroke-width="3"/>
+                        <circle cx="86" cy="52" r="2.5" fill="#1e293b"/>
+                        <!-- Mouth (Smile) -->
+                        <path d="M 55 66 Q 70 76 85 66" fill="none" stroke="#047857" stroke-width="3.5" stroke-linecap="round"/>
+                        <!-- Body -->
+                        <rect x="25" y="90" width="90" height="60" rx="16" fill="#10b981" stroke="#047857" stroke-width="4"/>
+                        <!-- Screen / Badge on chest -->
+                        <rect x="42" y="105" width="56" height="30" rx="6" fill="#ecfdf5" stroke="#047857" stroke-width="3"/>
+                        <text x="70" y="125" font-family="Fredoka" font-size="14" font-weight="bold" fill="#047857" text-anchor="middle">LITERAL</text>
+                    </svg>
+                    <span class="text-xs font-bold bg-emerald-800 text-emerald-100 px-3 py-1 rounded-full mt-2 shadow">Literal-Bot 3000</span>
+                </div>
+            </div>
+
+            <!-- Level Cards Grid (2 Levels) -->
+            <div class="space-y-4">
+                <h3 class="text-2xl font-bold text-emerald-900">Choose Your Level</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+                    
+                    <!-- Level 1 Card -->
+                    <div id="card-lvl-1" class="bg-white rounded-3xl p-6 border-2 border-emerald-200 shadow-sm hover:shadow-md transition flex flex-col justify-between">
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="bg-emerald-100 text-emerald-800 font-bold text-xs px-3 py-1 rounded-full">Level 1</span>
+                                <span id="badge-lvl-1" class="text-xs font-semibold text-amber-600 bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200">⭐ 0/3 Stars</span>
+                            </div>
+                            <h4 class="text-xl font-bold text-emerald-900">🥪 Peanut Butter Sandwich</h4>
+                            <p class="text-sm text-gray-600 leading-relaxed">
+                                Guide the robot step-by-step to make a sandwich using bread, peanut butter, a knife, and a plate. Watch every prompt execute live!
+                            </p>
+                        </div>
+                        <div class="pt-6">
+                            <button onclick="app.startLevel(1)" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-2xl shadow transition">
+                                Play Level 1
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Level 2 Card -->
+                    <div id="card-lvl-2" class="bg-white rounded-3xl p-6 border-2 border-emerald-200 shadow-sm hover:shadow-md transition flex flex-col justify-between">
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between">
+                                <span class="bg-teal-100 text-teal-800 font-bold text-xs px-3 py-1 rounded-full">Level 2</span>
+                                <span id="badge-lvl-2" class="text-xs font-semibold text-gray-400 bg-gray-100 px-2.5 py-1 rounded-full">🔒 Locked</span>
+                            </div>
+                            <h4 class="text-xl font-bold text-emerald-900">🎨 Draw a House</h4>
+                            <p class="text-sm text-gray-600 leading-relaxed">
+                                Command the robot artist step-by-step on a canvas. Watch each drawing command render instantly in real-time!
+                            </p>
+                        </div>
+                        <div class="pt-6">
+                            <button id="btn-lvl-2" onclick="app.startLevel(2)" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-3 rounded-2xl shadow transition opacity-50 cursor-not-allowed" disabled>
+                                Unlock at Level 1
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- End game completion banner if both levels finished -->
+            <div id="hub-completion-banner" class="hidden bg-gradient-to-r from-amber-500 to-orange-500 rounded-3xl p-6 text-white shadow-lg flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div class="space-y-1 text-center sm:text-left">
+                    <h4 class="text-2xl font-bold">🎉 Master Instruction Writer!</h4>
+                    <p class="text-sm text-amber-100">You've completed all levels and mastered how to give precise step-by-step instructions to literal AI.</p>
+                </div>
+                <button onclick="app.switchView('end')" class="bg-white text-amber-900 font-bold px-6 py-3 rounded-2xl shadow hover:bg-amber-50 transition">
+                    View Final Reflection 🧠
+                </button>
+            </div>
+        </div>
+
+        <!-- VIEW: Level Workspace (Step-by-Step Typing Game Arena) -->
+        <div id="view-game" class="hidden space-y-6">
+            <!-- Header bar with Level Title & Back button -->
+            <div class="flex flex-wrap items-center justify-between gap-4 bg-white p-4 rounded-3xl shadow-sm border border-emerald-100">
+                <div class="flex items-center space-x-3">
+                    <button onclick="app.switchView('hub')" class="w-10 h-10 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 rounded-2xl flex items-center justify-center font-bold transition">
+                        ←
+                    </button>
+                    <div>
+                        <span id="game-level-tag" class="text-xs font-bold bg-emerald-100 text-emerald-800 px-2.5 py-0.5 rounded-full">Level 1</span>
+                        <h3 id="game-title" class="text-xl font-bold text-emerald-900">Peanut Butter Sandwich</h3>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-3">
+                    <div id="game-star-display" class="flex space-x-1 text-lg">⭐ ⭐ ⭐</div>
+                    <button onclick="app.showHint()" class="bg-amber-100 hover:bg-amber-200 text-amber-800 font-bold px-4 py-2 rounded-xl text-sm transition flex items-center space-x-1.5">
+                        <span>💡 Hint</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Two-column Workspace -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+                
+                <!-- Left Column: Step-by-Step Prompt Input (Cols 1-6) -->
+                <div class="lg:col-span-6 space-y-4 flex flex-col">
+                    <div class="bg-white rounded-3xl p-5 shadow-sm border border-emerald-100 flex-grow flex flex-col space-y-4">
+                        <div class="flex items-center justify-between">
+                            <label for="step-instruction-input" class="text-sm font-bold text-emerald-900 flex items-center space-x-2">
+                                <span>✍️ Type next instruction step:</span>
+                            </label>
+                            <span id="step-count-badge" class="text-xs text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full font-bold">Step 1</span>
+                        </div>
+
+                        <!-- Objective Box -->
+                        <div id="level-objective-box" class="bg-emerald-50 border border-emerald-200 rounded-2xl p-3 text-xs text-emerald-800 space-y-1">
+                            <span class="font-bold">🎯 Goal:</span> Make a proper peanut butter sandwich on a plate.
+                        </div>
+
+                        <!-- Single Instruction Input for Step-by-Step Model -->
+                        <div class="relative flex flex-col space-y-2">
+                            <div class="flex gap-2">
+                                <input type="text" id="step-instruction-input" placeholder="e.g. Pick up the knife" 
+                                    class="w-full px-4 py-3 bg-slate-50 border-2 border-slate-200 rounded-2xl font-mono text-sm focus:outline-none focus:border-emerald-500 focus:bg-white transition"
+                                    onkeydown="if(event.key === 'Enter') app.submitNextStep()">
+                                <button id="btn-run-step" onclick="app.submitNextStep()" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-5 py-3 rounded-2xl shadow transition whitespace-nowrap">
+                                    Send Prompt 🚀
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- History of executed steps -->
+                        <div class="space-y-2 flex-grow flex flex-col">
+                            <span class="text-xs font-bold text-slate-500">Executed Instructions Log:</span>
+                            <div id="executed-steps-log" class="bg-slate-50 border border-slate-200 rounded-2xl p-3 h-44 overflow-y-auto space-y-2 font-mono text-xs">
+                                <div class="text-slate-400 italic">No instructions sent yet. Type your first step above and press Send Prompt!</div>
+                            </div>
+                        </div>
+
+                        <!-- Finish Task Button -->
+                        <div class="pt-2 flex gap-3">
+                            <button onclick="app.finishTaskExecution()" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-3.5 px-6 rounded-2xl shadow-lg transition flex items-center justify-center space-x-2">
+                                <span>🏁 Finish & View Report</span>
+                            </button>
+                            <button onclick="app.loadStepSample()" class="bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-3.5 px-4 rounded-2xl text-sm transition" title="Load sample precise step">
+                                ⚡ Sample
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right Column: Visual Stage / Robot Arena (Cols 7-12) -->
+                <div class="lg:col-span-6 flex flex-col space-y-4">
+                    <div class="bg-white rounded-3xl p-5 shadow-sm border border-emerald-100 flex-grow flex flex-col items-center justify-between relative overflow-hidden min-h-[420px]">
+                        
+                        <!-- Stage header info -->
+                        <div class="w-full flex items-center justify-between text-xs font-bold text-gray-500">
+                            <span id="stage-status-text">🤖 Literal-Bot Status: Ready for prompt</span>
+                            <span id="live-action-counter" class="bg-slate-100 px-2.5 py-1 rounded-full">0 Steps Completed</span>
+                        </div>
+
+                        <!-- Visual Interactive Arena -->
+                        <div id="robot-stage" class="w-full flex-grow bg-gradient-to-b from-slate-50 to-emerald-50/40 border-2 border-dashed border-emerald-200 rounded-2xl relative my-3 flex items-center justify-center overflow-hidden min-h-[300px]">
+                            
+                            <!-- LEVEL 1 GRAPHICS (Sandwich Items) -->
+                            <div id="arena-level-1" class="w-full h-full relative p-4 flex flex-col items-center justify-center">
+                                <!-- Plate -->
+                                <div id="item-plate" class="absolute bottom-6 w-52 h-14 bg-white border-4 border-slate-200 rounded-full shadow-md flex items-center justify-center transition-all duration-700">
+                                    <span class="text-xs font-bold text-slate-300">Plate</span>
+                                </div>
+                                <!-- Bread Slice 1 -->
+                                <div id="item-bread1" class="absolute bottom-10 transition-all duration-700 w-24 h-24 bg-amber-200 border-3 border-amber-400 rounded-2xl shadow flex items-center justify-center transform -translate-x-12">
+                                    <span class="text-xs font-bold text-amber-800">Bread 1</span>
+                                </div>
+                                <!-- Bread Slice 2 -->
+                                <div id="item-bread2" class="absolute bottom-10 transition-all duration-700 w-24 h-24 bg-amber-200 border-3 border-amber-400 rounded-2xl shadow flex items-center justify-center transform translate-x-12">
+                                    <span class="text-xs font-bold text-amber-800">Bread 2</span>
+                                </div>
+                                <!-- Peanut Butter Jar -->
+                                <div id="item-jar" class="absolute top-8 left-8 transition-all duration-700 w-20 h-28 bg-amber-700 border-4 border-amber-900 rounded-2xl shadow-lg flex flex-col items-center justify-between p-2">
+                                    <div id="jar-lid" class="w-16 h-6 bg-red-600 rounded-lg border-2 border-red-800 flex items-center justify-center">
+                                        <span class="text-[9px] font-bold text-white">LID</span>
+                                    </div>
+                                    <span class="text-[10px] font-bold text-amber-100 text-center leading-tight">Peanut Butter</span>
+                                    <div class="w-12 h-6 bg-amber-600 rounded border border-amber-800 flex items-center justify-center">
+                                        <span id="jar-status-text" class="text-[9px] font-bold text-amber-100">CLOSED</span>
+                                    </div>
+                                </div>
+                                <!-- Knife -->
+                                <div id="item-knife" class="absolute top-10 right-8 transition-all duration-700 w-28 h-8 flex items-center">
+                                    <div class="w-20 h-3 bg-slate-300 border-2 border-slate-400 rounded-l"></div>
+                                    <div class="w-8 h-4 bg-amber-800 rounded-r border-2 border-amber-900"></div>
+                                </div>
+                            </div>
+
+                            <!-- LEVEL 2 GRAPHICS (Drawing Canvas) -->
+                            <div id="arena-level-2" class="hidden w-full h-full relative flex items-center justify-center bg-white rounded-xl border border-slate-200">
+                                <canvas id="drawing-canvas" width="400" height="280" class="w-full h-full rounded-xl"></canvas>
+                            </div>
+
+                            <!-- Animated Robot Character Overlay during execution -->
+                            <div id="robot-avatar" class="absolute bottom-2 transition-all duration-500 transform translate-y-24 opacity-0 flex flex-col items-center pointer-events-none">
+                                <div id="robot-speech-bubble" class="bg-white border-2 border-emerald-500 px-3 py-1 rounded-2xl shadow-md text-xs font-bold text-emerald-800 mb-1 max-w-[200px] text-center">
+                                    Executing step...
+                                </div>
+                                <div class="w-16 h-16 bg-emerald-500 border-3 border-emerald-700 rounded-2xl flex items-center justify-center shadow-lg relative">
+                                    <!-- Robot eyes -->
+                                    <div class="flex space-x-2">
+                                        <div class="w-3 h-3 bg-white rounded-full flex items-center justify-center"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+                                        <div class="w-3 h-3 bg-white rounded-full flex items-center justify-center"><div class="w-1.5 h-1.5 bg-slate-900 rounded-full"></div></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Bottom quick hint / prompt tips -->
+                        <div class="w-full bg-slate-50 border border-slate-200 rounded-2xl p-3 text-xs text-slate-600 flex items-center justify-between">
+                            <span id="stage-tip-text">💡 Tip: Watch how the robot reacts to each individual instruction in real-time!</span>
+                            <span class="font-bold text-emerald-700" id="stage-level-indicator">Level 1 of 2</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- VIEW: Robot Report & Feedback Modal/Screen -->
+        <div id="view-report" class="hidden space-y-6 max-w-3xl mx-auto">
+            <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-xl border border-emerald-100 space-y-6">
+                
+                <!-- Report Header with Rating -->
+                <div class="flex flex-col sm:flex-row items-center justify-between gap-4 border-b border-slate-100 pb-6">
+                    <div class="space-y-1 text-center sm:text-left">
+                        <span id="report-badge-tag" class="bg-emerald-100 text-emerald-800 font-bold text-xs px-3 py-1 rounded-full">Level Completed</span>
+                        <h3 class="text-2xl font-extrabold text-emerald-900">🤖 Robot Execution Report</h3>
+                        <p class="text-sm text-gray-600">Literal-Bot followed your exact prompt sequence. Here is what happened!</p>
+                    </div>
+                    <div class="flex flex-col items-center bg-emerald-50 border border-emerald-200 rounded-2xl p-4">
+                        <div id="report-stars" class="text-2xl">⭐ ⭐ ⭐</div>
+                        <span id="report-rating-text" class="text-xs font-bold text-emerald-800 mt-1">Perfect Instructions!</span>
+                    </div>
+                </div>
+
+                <!-- Step-by-Step Breakdown -->
+                <div class="space-y-3">
+                    <h4 class="text-sm font-bold text-slate-700">Step-by-Step Breakdown & Literal Reality:</h4>
+                    <div id="report-steps-container" class="space-y-3 max-h-72 overflow-y-auto pr-2">
+                        <!-- Populated dynamically -->
+                    </div>
+                </div>
+
+                <!-- Learning Moment / Vague Word Highlights -->
+                <div id="report-vague-box" class="bg-amber-50 border border-amber-200 rounded-2xl p-4 space-y-2">
+                    <h4 class="text-sm font-bold text-amber-900 flex items-center space-x-2">
+                        <span>🔍 Vague Word Detective</span>
+                    </h4>
+                    <p id="report-vague-text" class="text-xs text-amber-800 leading-relaxed">
+                        Words like "it", "some", or "put" can trick the robot because it doesn't know what item you mean.
+                    </p>
+                </div>
+
+                <!-- Bottom Actions -->
+                <div class="flex flex-wrap gap-3 pt-4">
+                    <button onclick="app.retryLevel()" class="flex-grow bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold py-3.5 px-6 rounded-2xl transition">
+                        🔄 Try Again & Improve
+                    </button>
+                    <button id="btn-next-level" onclick="app.proceedNextLevel()" class="flex-grow bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 px-6 rounded-2xl shadow-lg transition">
+                        Next Level ➡️
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- VIEW: End Screen ("Who did the thinking?") & Reflection -->
+        <div id="view-end" class="hidden space-y-6 max-w-3xl mx-auto">
+            <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-xl border border-emerald-100 space-y-6">
+                <div class="text-center space-y-3">
+                    <div class="w-16 h-16 bg-emerald-500 rounded-full mx-auto flex items-center justify-center text-3xl shadow-lg animate-gentle">🧠</div>
+                    <h3 class="text-3xl font-extrabold text-emerald-900">Who did the thinking?</h3>
+                    <p class="text-base font-medium text-emerald-700 bg-emerald-50 py-2 px-4 rounded-2xl inline-block border border-emerald-200">
+                        The robot didn't think. <strong>YOU did!</strong>
+                    </p>
+                    <p class="text-sm text-gray-600 max-w-lg mx-auto">
+                        AI models are powerful, but they have zero common sense. They rely entirely on humans to supply clear step-by-step logic, structure, and constraints.
+                    </p>
+                </div>
+
+                <!-- Reflection Questions -->
+                <div class="space-y-4 pt-2">
+                    <h4 class="text-base font-bold text-emerald-900">✍️ Instruction Engineering Reflection:</h4>
+                    
+                    <div class="space-y-3">
+                        <div class="space-y-1">
+                            <label class="text-xs font-bold text-gray-700">1. What did you assume that you never wrote down?</label>
+                            <input type="text" id="refract-1" placeholder="e.g. I assumed the robot knew the jar lid needed opening..." class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-emerald-500">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-xs font-bold text-gray-700">2. Was the robot wrong, or were the instructions unclear?</label>
+                            <input type="text" id="refract-2" placeholder="e.g. The robot followed my words literally, so my instructions were unclear." class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-emerald-500">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-xs font-bold text-gray-700">3. How will you write better instructions to a real AI?</label>
+                            <input type="text" id="refract-3" placeholder="e.g. I will be very specific, give context, and leave nothing to guesswork!" class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-emerald-500">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Finish Button -->
+                <div class="pt-4 flex justify-end">
+                    <button onclick="app.finishQuest()" class="w-full sm:w-auto bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 px-8 rounded-2xl shadow-lg transition">
+                        🎉 Complete Quest & Return Home
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- VIEW: Literal Guide Standalone Page -->
+        <div id="view-guide" class="hidden space-y-6 max-w-3xl mx-auto">
+            <div class="bg-white rounded-3xl p-6 sm:p-8 shadow-xl border border-emerald-100 space-y-6">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <span class="bg-emerald-100 text-emerald-800 font-bold text-xs px-3 py-1 rounded-full">Cheat Sheet</span>
+                        <h3 class="text-2xl font-extrabold text-emerald-900 mt-1">📖 The Literal-Bot Guide</h3>
+                    </div>
+                    <button onclick="app.switchView('hub')" class="bg-slate-100 hover:bg-slate-200 text-slate-700 px-4 py-2 rounded-xl text-sm font-bold transition">
+                        ← Back to Levels
+                    </button>
+                </div>
+
+                <p class="text-sm text-gray-600 leading-relaxed">
+                    AI doesn't have a human brain or common sense. Whenever you give instructions to an AI step-by-step, remember these golden rules:
+                </p>
+
+                <div class="space-y-4">
+                    <div class="p-4 bg-emerald-50 border border-emerald-200 rounded-2xl space-y-1">
+                        <h4 class="font-bold text-emerald-900 text-base">🟢 Rule 1: No Common Sense</h4>
+                        <p class="text-xs text-gray-700">The robot never fills in missing steps. If you skip opening a jar, it tries to scoop through the lid.</p>
+                    </div>
+
+                    <div class="p-4 bg-teal-50 border border-teal-200 rounded-2xl space-y-1">
+                        <h4 class="font-bold text-teal-900 text-base">🟢 Rule 2: Literal Meanings</h4>
+                        <p class="text-xs text-gray-700">Words matter! "Put peanut butter on the bread" places the whole jar on the bread unless you specify using a knife.</p>
+                    </div>
+
+                    <div class="p-4 bg-cyan-50 border border-cyan-200 rounded-2xl space-y-1">
+                        <h4 class="font-bold text-cyan-900 text-base">🟢 Rule 3: Strict Order</h4>
+                        <p class="text-xs text-gray-700">Steps are executed exactly in the order you type them. You can't spread peanut butter before picking up the knife.</p>
+                    </div>
+                </div>
+
+                <div class="pt-4 flex justify-center">
+                    <button onclick="app.switchView('hub')" class="bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-8 rounded-2xl shadow-lg transition">
+                        Ready! Back to Levels 🚀
+                    </button>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Custom Message Box Modal (No alert/confirm) -->
+    <div id="modal-msg" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl border border-emerald-100 space-y-4 text-center transform scale-95 transition-transform" id="modal-content">
+            <div id="modal-icon" class="text-4xl">💡</div>
+            <h4 id="modal-title" class="text-xl font-bold text-emerald-900">Robot Message</h4>
+            <p id="modal-text" class="text-sm text-gray-600 leading-relaxed">Here is your hint or message.</p>
+            <div class="pt-2">
+                <button onclick="app.closeModal()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-2xl shadow transition">
+                    Got it! 👍
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /**
+         * Robo-Literal App Controller (Step-by-Step Interactive Typing Model)
+         * Allows students to type instructions one-by-one, viewing immediate visual feedback
+         * and rule execution on the robot arena.
+         */
+        class RoboLiteralApp {
+            constructor() {
+                this.currentLevel = 1;
+                this.unlockedLevel = 1;
+                this.levelStars = { 1: 0, 2: 0 };
+                this.activeView = 'hub';
+                this.executedStepsLog = [];
+                this.simulationReport = [];
+                this.canvasCtx = null;
+
+                // Level 1 running simulation state tracker
+                this.l1State = {
+                    knifePickedUp: false,
+                    jarOpen: false,
+                    peanutButterScooped: false,
+                    spreadDone: false,
+                    breadCovered: false,
+                    successScore: 3
+                };
+
+                // Level 2 running simulation state tracker
+                this.l2StepCount = 0;
+
+                this.setupCanvas();
+            }
+
+            /**
+             * Switch views in the single-page app
+             */
+            switchView(viewName) {
+                this.activeView = viewName;
+                const views = ['hub', 'game', 'report', 'end', 'guide'];
+                views.forEach(v => {
+                    const el = document.getElementById(`view-${v}`);
+                    if (el) el.classList.add('hidden');
+                });
+
+                const targetEl = document.getElementById(`view-${viewName}`);
+                if (targetEl) targetEl.classList.remove('hidden');
+
+                // Update navigation button active states
+                ['hub', 'guide'].forEach(n => {
+                    const btn = document.getElementById(`nav-${n}`);
+                    if (btn) {
+                        if (n === viewName) {
+                            btn.className = 'px-3 py-1.5 rounded-xl text-sm font-semibold transition bg-emerald-100 text-emerald-800';
+                        } else {
+                            btn.className = 'px-3 py-1.5 rounded-xl text-sm font-semibold transition bg-gray-100 text-gray-700 hover:bg-gray-200';
+                        }
+                    }
+                });
+
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            /**
+             * Setup Level 2 Drawing Canvas context
+             */
+            setupCanvas() {
+                const canvas = document.getElementById('drawing-canvas');
+                if (canvas) {
+                    this.canvasCtx = canvas.getContext('2d');
+                    this.clearCanvas();
+                }
+            }
+
+            clearCanvas() {
+                if (!this.canvasCtx) return;
+                const canvas = document.getElementById('drawing-canvas');
+                this.canvasCtx.fillStyle = '#ffffff';
+                this.canvasCtx.fillRect(0, 0, canvas.width, canvas.height);
+                // Draw grid lines
+                this.canvasCtx.strokeStyle = '#f1f5f9';
+                this.canvasCtx.lineWidth = 1;
+                for (let x = 0; x < canvas.width; x += 20) {
+                    this.canvasCtx.beginPath();
+                    this.canvasCtx.moveTo(x, 0);
+                    this.canvasCtx.lineTo(x, canvas.height);
+                    this.canvasCtx.stroke();
+                }
+                for (let y = 0; y < canvas.height; y += 20) {
+                    this.canvasCtx.beginPath();
+                    this.canvasCtx.moveTo(0, y);
+                    this.canvasCtx.lineTo(canvas.width, y);
+                    this.canvasCtx.stroke();
+                }
+            }
+
+            /**
+             * Start a specific level (1 or 2) in step-by-step mode
+             */
+            startLevel(lvl) {
+                if (lvl > this.unlockedLevel) {
+                    this.showModal('🔒 Locked Level', 'Please complete Level 1 first to unlock Level 2!');
+                    return;
+                }
+                this.currentLevel = lvl;
+                this.switchView('game');
+
+                // Reset session state for this run
+                this.executedStepsLog = [];
+                this.simulationReport = [];
+                this.l1State = {
+                    knifePickedUp: false,
+                    jarOpen: false,
+                    peanutButterScooped: false,
+                    spreadDone: false,
+                    breadCovered: false,
+                    successScore: 3
+                };
+                this.l2StepCount = 0;
+
+                // Update UI elements for the level
+                const tag = document.getElementById('game-level-tag');
+                const title = document.getElementById('game-title');
+                const objBox = document.getElementById('level-objective-box');
+                const tipText = document.getElementById('stage-tip-text');
+                const levelIndicator = document.getElementById('stage-level-indicator');
+                
+                // Arena element visibility
+                const arena1 = document.getElementById('arena-level-1');
+                const arena2 = document.getElementById('arena-level-2');
+
+                arena1.classList.add('hidden');
+                arena2.classList.add('hidden');
+
+                if (lvl === 1) {
+                    tag.textContent = 'Level 1';
+                    title.textContent = 'Peanut Butter Sandwich';
+                    objBox.innerHTML = '<strong>🎯 Goal:</strong> Make a proper peanut butter sandwich on a plate with open jar and spread peanut butter.';
+                    tipText.textContent = '💡 Tip: Type one step at a time and press Send Prompt to watch the robot execute it live!';
+                    levelIndicator.textContent = 'Level 1 of 2';
+                    arena1.classList.remove('hidden');
+                    this.resetLevel1Visuals();
+                } else if (lvl === 2) {
+                    tag.textContent = 'Level 2';
+                    title.textContent = 'Draw a House';
+                    objBox.innerHTML = '<strong>🎯 Goal:</strong> Type drawing commands step-by-step with precise shapes and sizes (e.g. "draw a square 100 pixels").';
+                    tipText.textContent = '💡 Tip: Vague commands like "draw a house" make the robot draw a tiny dot!';
+                    levelIndicator.textContent = 'Level 2 of 2';
+                    arena2.classList.remove('hidden');
+                    this.clearCanvas();
+                }
+
+                document.getElementById('step-instruction-input').value = '';
+                document.getElementById('step-count-badge').textContent = 'Step 1';
+                document.getElementById('live-action-counter').textContent = '0 Steps Completed';
+                document.getElementById('executed-steps-log').innerHTML = '<div class="text-slate-400 italic">No instructions sent yet. Type your first step above and press Send Prompt!</div>';
+            }
+
+            /**
+             * Reset Level 1 stage visuals to default positions
+             */
+            resetLevel1Visuals() {
+                const jar = document.getElementById('item-jar');
+                const lid = document.getElementById('jar-lid');
+                const jarStatus = document.getElementById('jar-status-text');
+                const bread1 = document.getElementById('item-bread1');
+                const bread2 = document.getElementById('item-bread2');
+                const knife = document.getElementById('item-knife');
+                const plate = document.getElementById('item-plate');
+
+                jar.style.transform = 'translate(0px, 0px)';
+                jar.style.top = '32px';
+                jar.style.left = '32px';
+                lid.style.transform = 'translate(0px, 0px)';
+                jarStatus.textContent = 'CLOSED';
+                jarStatus.className = 'text-[9px] font-bold text-amber-100';
+
+                bread1.style.transform = 'translate(-48px, 0px)';
+                bread1.style.backgroundColor = '#fde68a';
+                bread2.style.transform = 'translate(48px, 0px)';
+                knife.style.transform = 'translate(0px, 0px)';
+                knife.style.top = '40px';
+                knife.style.right = '32px';
+                plate.style.transform = 'translate(0px, 0px)';
+            }
+
+            /**
+             * Load sample step sequentially (cycles through recommended sample steps)
+             */
+            loadStepSample() {
+                const input = document.getElementById('step-instruction-input');
+                const stepNum = this.executedStepsLog.length + 1;
+
+                if (this.currentLevel === 1) {
+                    const samples = [
+                        "Pick up the knife",
+                        "Twist the lid of the jar counter-clockwise until it comes off",
+                        "Use the knife to scoop peanut butter",
+                        "Spread peanut butter on bread 1",
+                        "Put bread 2 on top of bread 1"
+                    ];
+                    input.value = samples[(stepNum - 1) % samples.length];
+                } else if (this.currentLevel === 2) {
+                    const samples = [
+                        "draw a square width 120 height 100",
+                        "draw a triangle on top",
+                        "draw a door height 40 width 25"
+                    ];
+                    input.value = samples[(stepNum - 1) % samples.length];
+                }
+            }
+
+            /**
+             * Show Hint Modal
+             */
+            showHint() {
+                let hintText = "";
+                if (this.currentLevel === 1) {
+                    hintText = "💡 Hint: The robot never assumes you want to open the jar or pick up the knife unless you type it as a separate step! Try typing 'Pick up the knife' next.";
+                } else if (this.currentLevel === 2) {
+                    hintText = "💡 Hint: If you just type 'draw a house', the robot draws a tiny dot. Try specifying shapes like 'draw a square 100 pixels wide' and 'draw a triangle on top'!";
+                }
+                this.showModal('Robot Hint 💡', hintText);
+            }
+
+            /**
+             * Submit and execute the next individual step prompt
+             */
+            async submitNextStep() {
+                const inputEl = document.getElementById('step-instruction-input');
+                const stepText = inputEl.value.trim();
+
+                if (!stepText) {
+                    this.showModal('Empty Prompt', 'Please type an instruction step before sending!');
+                    return;
+                }
+
+                inputEl.value = '';
+                const stepIdx = this.executedStepsLog.length + 1;
+
+                // Animate robot processing this step live
+                const robotAvatar = document.getElementById('robot-avatar');
+                const speechBubble = document.getElementById('robot-speech-bubble');
+                const stageStatus = document.getElementById('stage-status-text');
+
+                robotAvatar.classList.remove('translate-y-24', 'opacity-0');
+                robotAvatar.classList.add('translate-y-0', 'opacity-100');
+                speechBubble.textContent = `Reading: "${stepText}"`;
+                stageStatus.textContent = `🤖 Literal-Bot executing Step ${stepIdx}...`;
+
+                await this.sleep(700);
+
+                // Evaluate the rule interpreter for this individual step
+                let actionDesc = "";
+                let whyDesc = "";
+                let isVague = false;
+
+                if (this.currentLevel === 1) {
+                    const lower = stepText.toLowerCase();
+                    if (lower.includes('knife') && (lower.includes('get') || lower.includes('pick'))) {
+                        this.l1State.knifePickedUp = true;
+                        actionDesc = "Robot picked up the knife.";
+                        whyDesc = "You explicitly told the robot to pick up the knife.";
+                        const knife = document.getElementById('item-knife');
+                        knife.style.transform = 'translate(-40px, -60px) rotate(-20deg)';
+                    } else if (lower.includes('open') && lower.includes('jar')) {
+                        this.l1State.jarOpen = true;
+                        actionDesc = "Robot twisted and opened the jar lid!";
+                        whyDesc = "Precise instruction! The jar lid is now open.";
+                        const lid = document.getElementById('jar-lid');
+                        const jarStatus = document.getElementById('jar-status-text');
+                        lid.style.transform = 'translate(0px, -25px)';
+                        jarStatus.textContent = 'OPEN';
+                        jarStatus.className = 'text-[9px] font-bold text-emerald-200';
+                    } else if (lower.includes('scoop') || (lower.includes('peanut butter') && lower.includes('knife'))) {
+                        if (!this.l1State.jarOpen) {
+                            actionDesc = "Robot tried to scoop peanut butter from the CLOSED jar!";
+                            whyDesc = "You never said 'open the jar'! The robot tried to scoop through the closed lid.";
+                            this.l1State.successScore = Math.min(this.l1State.successScore, 1);
+                            isVague = true;
+                        } else if (!this.l1State.knifePickedUp) {
+                            actionDesc = "Robot tried to scoop peanut butter with its bare hand!";
+                            whyDesc = "You never said to pick up the knife, so the robot used its hand.";
+                            this.l1State.successScore = Math.min(this.l1State.successScore, 2);
+                            isVague = true;
+                        } else {
+                            this.l1State.peanutButterScooped = true;
+                            actionDesc = "Robot scooped peanut butter onto the knife.";
+                            whyDesc = "Knife is picked up and jar is open. Excellent precision!";
+                        }
+                    } else if (lower.includes('spread')) {
+                        if (!this.l1State.peanutButterScooped) {
+                            actionDesc = "Robot smeared an empty knife across the bread.";
+                            whyDesc = "You didn't scoop peanut butter first, so nothing was spread.";
+                            this.l1State.successScore = Math.min(this.l1State.successScore, 1);
+                            isVague = true;
+                        } else {
+                            this.l1State.spreadDone = true;
+                            actionDesc = "Robot spread peanut butter on the bread slice.";
+                            whyDesc = "Successful spread action!";
+                            const bread1 = document.getElementById('item-bread1');
+                            bread1.style.backgroundColor = '#d97706'; // PB color
+                        }
+                    } else if (lower.includes('bread') && (lower.includes('put') || lower.includes('top') || lower.includes('cover'))) {
+                        this.l1State.breadCovered = true;
+                        actionDesc = "Robot placed bread 2 on top of bread 1 to make a sandwich!";
+                        whyDesc = "Sandwich assembly complete!";
+                        const bread2 = document.getElementById('item-bread2');
+                        bread2.style.transform = 'translate(-48px, -15px)';
+                    } else if (lower.includes('peanut butter') && lower.includes('bread') && !lower.includes('spread') && !lower.includes('knife')) {
+                        actionDesc = "Robot picked up the entire heavy peanut butter jar and dumped it on top of the bread!";
+                        whyDesc = "You said 'put peanut butter on bread', so the robot literally placed the whole closed jar on the bread!";
+                        this.l1State.successScore = 1;
+                        isVague = true;
+                        const jar = document.getElementById('item-jar');
+                        jar.style.transform = 'translate(-48px, -40px)';
+                    } else {
+                        actionDesc = `Robot executed literal interpretation of "${stepText}".`;
+                        whyDesc = "The instruction was too vague, so the robot did a generic motion without changing the sandwich state.";
+                        this.l1State.successScore = Math.min(this.l1State.successScore, 2);
+                        isVague = true;
+                    }
+                } else if (this.currentLevel === 2) {
+                    this.l2StepCount++;
+                    const lower = stepText.toLowerCase();
+                    actionDesc = `Robot executed drawing prompt: "${stepText}".`;
+                    if (lower.includes('square') || lower.includes('box')) {
+                        whyDesc = "Precise shape instruction detected! Drawing square.";
+                        this.drawShapeOnCanvas('square', lower);
+                    } else if (lower.includes('triangle') || lower.includes('roof')) {
+                        whyDesc = "Precise shape instruction detected! Drawing triangle.";
+                        this.drawShapeOnCanvas('triangle', lower);
+                    } else if (lower.includes('door') || lower.includes('rectangle')) {
+                        whyDesc = "Drawing rectangle element.";
+                        this.drawShapeOnCanvas('rectangle', lower);
+                    } else {
+                        whyDesc = "Vague drawing prompt! Robot drew a tiny random dot because no shape or size was specified.";
+                        this.l1State.successScore = Math.min(this.l1State.successScore, 1);
+                        isVague = true;
+                        this.drawShapeOnCanvas('dot', lower);
+                    }
+                }
+
+                // Log the executed step
+                const stepRecord = {
+                    step: stepText,
+                    action: actionDesc,
+                    why: whyDesc,
+                    isVague: isVague
+                };
+                this.executedStepsLog.push(stepRecord);
+                this.simulationReport.push(stepRecord);
+
+                // Update UI log display
+                const logContainer = document.getElementById('executed-steps-log');
+                if (this.executedStepsLog.length === 1) {
+                    logContainer.innerHTML = '';
+                }
+                const logItem = document.createElement('div');
+                logItem.className = `p-2 rounded-xl border ${isVague ? 'bg-amber-50 border-amber-200 text-amber-900' : 'bg-emerald-50 border-emerald-200 text-emerald-900'}`;
+                logItem.innerHTML = `<span class="font-bold">Step ${stepIdx}:</span> "${stepText}" → <span class="italic">${actionDesc}</span>`;
+                logContainer.appendChild(logItem);
+                logContainer.scrollTop = logContainer.scrollHeight;
+
+                document.getElementById('step-count-badge').textContent = `Step ${this.executedStepsLog.length + 1}`;
+                document.getElementById('live-action-counter').textContent = `${this.executedStepsLog.length} Steps Completed`;
+
+                speechBubble.textContent = "Done!";
+                await this.sleep(500);
+
+                robotAvatar.classList.add('translate-y-24', 'opacity-0');
+                robotAvatar.classList.remove('translate-y-0', 'opacity-100');
+                stageStatus.textContent = `🤖 Literal-Bot Status: Ready for next prompt`;
+            }
+
+            /**
+             * Draw shapes on Level 2 canvas based on command text
+             */
+            drawShapeOnCanvas(type, text) {
+                if (!this.canvasCtx) return;
+                const ctx = this.canvasCtx;
+                ctx.strokeStyle = '#047857';
+                ctx.fillStyle = '#34d399';
+                ctx.lineWidth = 3;
+
+                if (type === 'square') {
+                    ctx.fillRect(140, 110, 120, 100);
+                    ctx.strokeRect(140, 110, 120, 100);
+                } else if (type === 'triangle') {
+                    ctx.fillStyle = '#f87171';
+                    ctx.beginPath();
+                    ctx.moveTo(130, 110);
+                    ctx.lineTo(200, 40);
+                    ctx.lineTo(270, 110);
+                    ctx.closePath();
+                    ctx.fill();
+                    ctx.stroke();
+                } else if (type === 'rectangle') {
+                    ctx.fillStyle = '#60a5fa';
+                    ctx.fillRect(180, 150, 40, 60);
+                    ctx.strokeRect(180, 150, 40, 60);
+                } else {
+                    // Dot for vague prompt
+                    ctx.fillStyle = '#94a3b8';
+                    ctx.beginPath();
+                    ctx.arc(200, 140, 5, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+
+            /**
+             * Finish task execution and view the comprehensive Robot Report
+             */
+            finishTaskExecution() {
+                if (this.executedStepsLog.length === 0) {
+                    this.showModal('No Steps Yet', 'Please send at least one instruction step before finishing!');
+                    return;
+                }
+
+                let finalScore = this.currentLevel === 1 ? this.l1State.successScore : (this.l2StepCount >= 2 ? 3 : 2);
+                this.levelStars[this.currentLevel] = Math.max(this.levelStars[this.currentLevel], finalScore);
+                this.showReportView(finalScore);
+            }
+
+            /**
+             * Display Robot Report view
+             */
+            showReportView(stars) {
+                this.switchView('report');
+
+                const starsEl = document.getElementById('report-stars');
+                const ratingText = document.getElementById('report-rating-text');
+                const stepsContainer = document.getElementById('report-steps-container');
+                const badgeTag = document.getElementById('report-badge-tag');
+                const vagueText = document.getElementById('report-vague-text');
+                const nextBtn = document.getElementById('btn-next-level');
+
+                badgeTag.textContent = `Level ${this.currentLevel} Report`;
+                starsEl.textContent = '⭐'.repeat(stars) + '☆'.repeat(3 - stars);
+
+                if (stars === 3) {
+                    ratingText.textContent = "Outstanding Precision! Master Instruction Writer!";
+                } else if (stars === 2) {
+                    ratingText.textContent = "Good Job! A few vague steps caused funny robot mix-ups.";
+                } else {
+                    ratingText.textContent = "Literal-Bot got confused! The instructions were too vague.";
+                }
+
+                // Populate steps report
+                stepsContainer.innerHTML = '';
+                this.simulationReport.forEach((rep, idx) => {
+                    const div = document.createElement('div');
+                    div.className = `p-3.5 rounded-2xl border text-xs space-y-1 ${rep.isVague ? 'bg-amber-50/60 border-amber-200' : 'bg-emerald-50/60 border-emerald-200'}`;
+                    div.innerHTML = `
+                        <div class="flex items-center justify-between font-bold">
+                            <span class="text-slate-800">Step ${idx + 1}: "${rep.step}"</span>
+                            <span class="${rep.isVague ? 'text-amber-700' : 'text-emerald-700'}">${rep.isVague ? '⚠️ Literal Mix-up' : '✅ Precise'}</span>
+                        </div>
+                        <p class="text-slate-700"><strong>Robot Action:</strong> ${rep.action}</p>
+                        <p class="text-slate-500 italic"><strong>Why?:</strong> ${rep.why}</p>
+                    `;
+                    stepsContainer.appendChild(div);
+                });
+
+                vagueText.textContent = stars === 3 
+                    ? "Great job! You avoided vague words like 'it' or 'some' and named items directly."
+                    : "Tip for next time: Avoid pronouns like 'it' or omitting steps. Name items explicitly so the robot knows your exact intent!";
+
+                // Update unlock status
+                if (stars >= 1) {
+                    if (this.currentLevel < 2) {
+                        this.unlockedLevel = Math.max(this.unlockedLevel, this.currentLevel + 1);
+                        nextBtn.textContent = `Unlock Level ${this.currentLevel + 1} ➡️`;
+                        nextBtn.onclick = () => this.startLevel(this.currentLevel + 1);
+                        nextBtn.classList.remove('hidden');
+                    } else {
+                        nextBtn.textContent = "View Final Reflection 🧠";
+                        nextBtn.onclick = () => this.switchView('end');
+                        nextBtn.classList.remove('hidden');
+                    }
+                }
+
+                this.updateHubBadges();
+            }
+
+            /**
+             * Update Level Hub badges and lock buttons
+             */
+            updateHubBadges() {
+                for (let i = 1; i <= 2; i++) {
+                    const badge = document.getElementById(`badge-lvl-${i}`);
+                    const cardBtn = document.getElementById(`btn-lvl-${i}`);
+
+                    if (i <= this.unlockedLevel) {
+                        if (badge) {
+                            badge.textContent = `⭐ ${this.levelStars[i]}/3 Stars`;
+                            badge.className = 'text-xs font-semibold text-emerald-700 bg-emerald-50 px-2.5 py-1 rounded-full border border-emerald-200';
+                        }
+                        if (cardBtn) {
+                            cardBtn.disabled = false;
+                            cardBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                            cardBtn.textContent = `Play Level ${i}`;
+                        }
+                    }
+                }
+
+                // Check if all completed
+                if (this.levelStars[1] > 0 && this.levelStars[2] > 0) {
+                    document.getElementById('hub-completion-banner').classList.remove('hidden');
+                }
+            }
+
+            retryLevel() {
+                this.startLevel(this.currentLevel);
+            }
+
+            proceedNextLevel() {
+                if (this.currentLevel < 2) {
+                    this.startLevel(this.currentLevel + 1);
+                } else {
+                    this.switchView('end');
+                }
+            }
+
+            finishQuest() {
+                this.switchView('hub');
+                this.showModal('🎉 Quest Completed!', 'Wonderful job exploring how AI works. You are now a true instruction-writing expert!');
+            }
+
+            resetAllProgress() {
+                this.currentLevel = 1;
+                this.unlockedLevel = 1;
+                this.levelStars = { 1: 0, 2: 0 };
+                this.updateHubBadges();
+                document.getElementById('hub-completion-banner').classList.add('hidden');
+                this.switchView('hub');
+                this.showModal('🔄 Progress Reset', 'All levels have been reset. Ready to start again!');
+            }
+
+            showModal(title, text) {
+                document.getElementById('modal-title').textContent = title;
+                document.getElementById('modal-text').textContent = text;
+                document.getElementById('modal-msg').classList.remove('hidden');
+            }
+
+            closeModal() {
+                document.getElementById('modal-msg').classList.add('hidden');
+            }
+
+            sleep(ms) {
+                return new Promise(resolve => setTimeout(resolve, ms));
+            }
+        }
+
+        // Initialize App on window load
+        let app = null;
+        window.onload = () => {
+            app = new RoboLiteralApp();
+        };
+    </script>
+</body>
+</html>
